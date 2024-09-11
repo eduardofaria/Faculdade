@@ -140,3 +140,217 @@ O cliente precisa de uma forma **genérica** e **flexível** de decodificar dife
 ### Esperança para Clareza
 
 Com esse entendimento, o exercício deve fazer mais sentido. A aplicação do padrão Abstract Factory permite que o sistema cresça e se adapte a novos requisitos de entrada de dados sem quebrar a lógica existente. Este é o poder do design orientado a objetos e dos padrões de projeto!
+
+
+
+
+Vou apresentar uma solução completa para o exercício de **Abstract Factory** seguindo os passos que detalhamos anteriormente. A ideia é fornecer uma implementação passo a passo que reflita um sistema de decodificadores de mensagens para diferentes formatos (XML, CSV, Texto Fixo).
+
+### Solução para o Exercício Abstract Factory
+
+#### Passo 1: Definir a Fábrica Abstrata `DecoderFactory`
+
+A classe `DecoderFactory` é uma **fábrica abstrata** que declara métodos abstratos para a criação de decodificadores para mensagens de cliente e conta.
+
+```java
+// DecoderFactory.java
+public abstract class DecoderFactory {
+    public abstract RegistrarClienteDecoder createRegistrarClienteDecoder();
+    public abstract RegistrarContaDecoder createRegistrarContaDecoder();
+    
+    // Método estático que retorna uma fábrica concreta baseada na origem fornecida
+    public static DecoderFactory fabricaParaOrigem(String origem) {
+        if ("X".equals(origem)) {
+            return new XMLDecoderFactory();
+        } else if ("Y".equals(origem)) {
+            return new CSVDecoderFactory();
+        } else if ("Z".equals(origem)) {
+            return new TextoFixoDecoderFactory();
+        } else {
+            throw new IllegalArgumentException("Origem desconhecida: " + origem);
+        }
+    }
+}
+```
+
+#### Passo 2: Implementar as Fábricas Concretas
+
+Cada fábrica concreta herda de `DecoderFactory` e implementa os métodos para criar os decodificadores correspondentes aos formatos XML, CSV e Texto Fixo.
+
+```java
+// XMLDecoderFactory.java
+public class XMLDecoderFactory extends DecoderFactory {
+    @Override
+    public RegistrarClienteDecoder createRegistrarClienteDecoder() {
+        return new RegistrarClienteXMLDecoder();
+    }
+
+    @Override
+    public RegistrarContaDecoder createRegistrarContaDecoder() {
+        return new RegistrarContaXMLDecoder();
+    }
+}
+```
+
+```java
+// CSVDecoderFactory.java
+public class CSVDecoderFactory extends DecoderFactory {
+    @Override
+    public RegistrarClienteDecoder createRegistrarClienteDecoder() {
+        return new RegistrarClienteCSVDecoder();
+    }
+
+    @Override
+    public RegistrarContaDecoder createRegistrarContaDecoder() {
+        return new RegistrarContaCSVDecoder();
+    }
+}
+```
+
+```java
+// TextoFixoDecoderFactory.java
+public class TextoFixoDecoderFactory extends DecoderFactory {
+    @Override
+    public RegistrarClienteDecoder createRegistrarClienteDecoder() {
+        return new RegistrarClienteTextoFixoDecoder();
+    }
+
+    @Override
+    public RegistrarContaDecoder createRegistrarContaDecoder() {
+        return new RegistrarContaTextoFixoDecoder();
+    }
+}
+```
+
+#### Passo 3: Definir os Produtos Abstratos
+
+Criamos as interfaces para os decodificadores de mensagens de cliente e conta.
+
+```java
+// RegistrarClienteDecoder.java
+public interface RegistrarClienteDecoder {
+    void decodificar(String mensagem);
+}
+```
+
+```java
+// RegistrarContaDecoder.java
+public interface RegistrarContaDecoder {
+    void decodificar(String mensagem);
+}
+```
+
+#### Passo 4: Implementar os Produtos Concretos
+
+Implementamos os decodificadores concretos para cada formato.
+
+```java
+// RegistrarClienteXMLDecoder.java
+public class RegistrarClienteXMLDecoder implements RegistrarClienteDecoder {
+    @Override
+    public void decodificar(String mensagem) {
+        System.out.println("Decodificando cliente a partir de XML: " + mensagem);
+        // Lógica de decodificação de XML aqui
+    }
+}
+```
+
+```java
+// RegistrarContaXMLDecoder.java
+public class RegistrarContaXMLDecoder implements RegistrarContaDecoder {
+    @Override
+    public void decodificar(String mensagem) {
+        System.out.println("Decodificando conta a partir de XML: " + mensagem);
+        // Lógica de decodificação de XML aqui
+    }
+}
+```
+
+```java
+// RegistrarClienteCSVDecoder.java
+public class RegistrarClienteCSVDecoder implements RegistrarClienteDecoder {
+    @Override
+    public void decodificar(String mensagem) {
+        System.out.println("Decodificando cliente a partir de CSV: " + mensagem);
+        // Lógica de decodificação de CSV aqui
+    }
+}
+```
+
+```java
+// RegistrarContaCSVDecoder.java
+public class RegistrarContaCSVDecoder implements RegistrarContaDecoder {
+    @Override
+    public void decodificar(String mensagem) {
+        System.out.println("Decodificando conta a partir de CSV: " + mensagem);
+        // Lógica de decodificação de CSV aqui
+    }
+}
+```
+
+```java
+// RegistrarClienteTextoFixoDecoder.java
+public class RegistrarClienteTextoFixoDecoder implements RegistrarClienteDecoder {
+    @Override
+    public void decodificar(String mensagem) {
+        System.out.println("Decodificando cliente a partir de Texto Fixo: " + mensagem);
+        // Lógica de decodificação de Texto Fixo aqui
+    }
+}
+```
+
+```java
+// RegistrarContaTextoFixoDecoder.java
+public class RegistrarContaTextoFixoDecoder implements RegistrarContaDecoder {
+    @Override
+    public void decodificar(String mensagem) {
+        System.out.println("Decodificando conta a partir de Texto Fixo: " + mensagem);
+        // Lógica de decodificação de Texto Fixo aqui
+    }
+}
+```
+
+#### Passo 5: Criar a Classe Cliente para Testar o Padrão
+
+Por fim, criamos a classe `Main` que atua como o cliente para testar o padrão **Abstract Factory**.
+
+```java
+// Main.java
+public class Main {
+    public static void main(String[] args) {
+        // Exemplo de origem "X" para XML
+        String origem = "X";
+        
+        // Obter a fábrica correspondente à origem
+        DecoderFactory factory = DecoderFactory.fabricaParaOrigem(origem);
+        
+        // Criar decodificadores usando a fábrica selecionada
+        RegistrarClienteDecoder clienteDecoder = factory.createRegistrarClienteDecoder();
+        RegistrarContaDecoder contaDecoder = factory.createRegistrarContaDecoder();
+        
+        // Decodificar mensagens de exemplo
+        clienteDecoder.decodificar("<cliente><nome>João</nome></cliente>");
+        contaDecoder.decodificar("<conta><numero>12345</numero></conta>");
+    }
+}
+```
+
+### Explicação do Funcionamento
+
+- O cliente (`Main`) solicita a fábrica correta usando `DecoderFactory.fabricaParaOrigem(String origem)`.
+- A fábrica concreta (`XMLDecoderFactory`, `CSVDecoderFactory`, ou `TextoFixoDecoderFactory`) é criada com base na origem fornecida.
+- A fábrica concreta cria os decodificadores correspondentes para o tipo de mensagem.
+- O cliente usa os decodificadores para "decodificar" as mensagens fornecidas, exibindo o resultado.
+
+### Resultado Esperado
+
+Se o cliente usa `origem = "X"`, o resultado esperado no console será:
+
+```plaintext
+Decodificando cliente a partir de XML: <cliente><nome>João</nome></cliente>
+Decodificando conta a partir de XML: <conta><numero>12345</numero></conta>
+```
+
+### Conclusão
+
+Essa solução demonstra como o padrão **Abstract Factory** é usado para criar famílias de objetos relacionados (decodificadores) sem especificar suas classes concretas. Ela fornece um código flexível e facilmente extensível para diferentes formatos de dados e futuros formatos de mensagem que possam ser adicionados.
